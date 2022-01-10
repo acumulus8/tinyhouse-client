@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { server } from "../../lib/api";
-import { ListingsData, DeleteListingData, DeleteListingVariables, Listing } from "./types";
+import React from "react";
+import { useQuery, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { Listings as ListingsData } from "./__generated__/Listings";
+import { DeleteListing as DeleteListingData, DeleteListingVariables} from "./__generated__/DeleteListing";
 
-const LISTINGS = `
+const LISTINGS = gql`
   query Listings {
     listings {
       id
@@ -17,7 +19,7 @@ const LISTINGS = `
     }
   }
 `
-const DELETE_LISTING = `
+const DELETE_LISTING = gql`
   mutation DeleteListing($id: ID!) {
     deleteListing(id: $id) {
       id
@@ -30,38 +32,46 @@ interface Props {
 }
 
 export const Listings = ({ title }: Props) => {
-  const [listings, setListings] = useState<Listing[] | null>(null);
+  const { data, refetch, loading, error } = useQuery<ListingsData>(LISTINGS);
+
+  const [deleteListing, {loading: dltListingLoading, error: dltListingError }] = useMutation<DeleteListingData, DeleteListingVariables>(DELETE_LISTING);
   
-  const fetchListings = async () => {
-    const { data } = await server.fetch<ListingsData>({ query: LISTINGS })
-    setListings(data.listings);
+  const handleDeleteListing = async (id: string) => {
+    await deleteListing({ variables: { id } });
+    refetch();
   }
 
-  const deleteListing = async (id: string) => {
-    await server.fetch<DeleteListingData, DeleteListingVariables>({ 
-      query: DELETE_LISTING,
-      variables: { id }
-    })
-    fetchListings();
-  }
+  const listings = data ? data.listings : null;
 
   const listingsList =
     <ul>
     {listings?.map((listing) => {
       return <li key={listing.id}>
         {listing.title}
-        <button onClick={() => deleteListing(listing.id)}>Delete!</button>
+        <button onClick={() => handleDeleteListing(listing.id)}>Delete!</button>
         </li>
     })}
   </ul>
 
   
+  if (loading) {
+    return <h2>...Loading</h2>
+  }
+
+  if (error) {
+    return <h2>Uh oh! Something went wrong - please try again later!</h2>
+  }
+
+  const deleteListingLoadingMsg = dltListingLoading ? "Deleting, hold your horses" : null;
+  const deteListingErrorMsg = dltListingError ? "Uh oh - something went wrong. Try again later :*(" : null;
+
+
   return (
     <div>
       <h2>{title}</h2>
-      {listingsList}
-      <button onClick={fetchListings}>Query Listings!</button>
-      
+      {listingsList} 
+      {deleteListingLoadingMsg}
+      {deteListingErrorMsg}
     </div>
   )
 }
