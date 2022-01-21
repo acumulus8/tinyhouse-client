@@ -11,12 +11,13 @@ import { LOG_IN } from "./lib/graphql/mutations";
 import { LogIn as LogInData, LogInVariables } from "./lib/graphql/mutations/LogIn/__generated__/LogIn";
 
 const token = sessionStorage.getItem("token");
+console.log("TOKEN IN INDEX: ", token);
 
 const client = new ApolloClient({
 	uri: "/api",
 	cache: new InMemoryCache(),
 	headers: {
-		"X-CSRF-TOKEN": token || "",
+		"X-CSRF-TOKEN": sessionStorage.getItem("token") || "",
 	},
 	// request: async (operation) => {
 	// 	const token = sessionStorage.getItem("token");
@@ -85,7 +86,7 @@ const App = () => {
 					<Route path="/host" element={<Host />} />
 					<Route path="/listing/:id" element={<Listing />} />
 					<Route path="/listings/:location" element={<Listings />} />
-					<Route path="/user/:id" element={<User />} />
+					<Route path="/user/:id" element={<User viewer={viewer} />} />
 					<Route path="/login" element={<LogIn setViewer={setViewer} />} />
 					<Route path="*" element={<NotFound />} />
 				</Routes>
