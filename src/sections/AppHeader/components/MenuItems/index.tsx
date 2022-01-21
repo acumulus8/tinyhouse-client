@@ -37,8 +37,10 @@ export const MenuItems = ({ viewer, setViewer }: Props) => {
 		viewer.id && viewer.avatar ? (
 			<SubMenu key="SubMenu" title={<Avatar src={viewer.avatar} />}>
 				<Item key="/user">
-					<UserOutlined />
-					Profile
+					<Link to={`/user/${viewer.id}`}>
+						<UserOutlined />
+						Profile
+					</Link>
 				</Item>
 				<Item key="/logout">
 					<div onClick={handleLogOut}>
