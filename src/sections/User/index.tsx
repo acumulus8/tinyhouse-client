@@ -10,18 +10,19 @@ import { PageSkeleton, ErrorBanner } from "../../lib/components";
 
 interface Props {
 	viewer: Viewer;
+	setViewer: (viewer: Viewer) => void;
 }
 
 const { Content } = Layout;
 const PAGE_LIMIT = 4;
 
-export const User = ({ viewer }: Props) => {
+export const User = ({ viewer, setViewer }: Props) => {
 	const [listingsPage, setListingsPage] = useState(1);
 	const [bookingsPage, setBookingsPage] = useState(1);
 
 	const { id } = useParams() as { id: string };
 
-	const { data, loading, error } = useQuery<UserData, UserVariables>(USER, {
+	const { data, loading, error, refetch } = useQuery<UserData, UserVariables>(USER, {
 		variables: {
 			id: id || "",
 			bookingsPage,
@@ -29,6 +30,10 @@ export const User = ({ viewer }: Props) => {
 			limit: PAGE_LIMIT,
 		},
 	});
+
+	const handleUserRefetch = async () => {
+		await refetch();
+	};
 
 	if (loading) {
 		return (
@@ -53,7 +58,9 @@ export const User = ({ viewer }: Props) => {
 	const userListings = user ? user.listings : null;
 	const userBookings = user ? user.bookings : null;
 
-	const userProfileElement = user ? <UserProfile user={user} viewerIsUser={viewerIsUser} /> : null;
+	const userProfileElement = user ? (
+		<UserProfile user={user} viewerIsUser={viewerIsUser} viewer={viewer} setViewer={setViewer} handleUserRefetch={handleUserRefetch} />
+	) : null;
 	const userListingsElement = userListings ? (
 		<UserListings userListings={userListings} listingsPage={listingsPage} limit={PAGE_LIMIT} setListingsPage={setListingsPage} />
 	) : null;
