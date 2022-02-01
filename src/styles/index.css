@@ -79,6 +79,11 @@
 	border: 1px solid #f0f1f2;
 	box-shadow: 0 2px 4px rgba(29, 34, 108, 0.1);
 }
+
+.icon {
+	margin-right: 8px;
+}
+
 .error-banner {
 	position: fixed;
 	width: 100%;

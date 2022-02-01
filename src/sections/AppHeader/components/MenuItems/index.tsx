@@ -38,13 +38,13 @@ export const MenuItems = ({ viewer, setViewer }: Props) => {
 			<SubMenu key="SubMenu" title={<Avatar src={viewer.avatar} />}>
 				<Item key="/user">
 					<Link to={`/user/${viewer.id}`}>
-						<UserOutlined />
+						<UserOutlined className="icon" />
 						Profile
 					</Link>
 				</Item>
 				<Item key="/logout">
 					<div onClick={handleLogOut}>
-						<LogoutOutlined />
+						<LogoutOutlined className="icon" />
 						Log out
 					</div>
 				</Item>

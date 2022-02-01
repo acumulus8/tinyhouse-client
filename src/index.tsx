@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { render } from "react-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ApolloClient, ApolloProvider, InMemoryCache, useMutation } from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache, useMutation, concat, HttpLink, ApolloLink, Operation } from "@apollo/client";
 import { Layout, Affix, Spin } from "antd";
 import { Home, Host, Listing, Listings, NotFound, User, LogIn, AppHeader } from "./sections";
 import { AppHeaderSkeleton, ErrorBanner } from "./lib/components";
@@ -10,23 +10,21 @@ import { Viewer } from "./lib/types";
 import { LOG_IN } from "./lib/graphql/mutations";
 import { LogIn as LogInData, LogInVariables } from "./lib/graphql/mutations/LogIn/__generated__/LogIn";
 
-const token = sessionStorage.getItem("token");
-console.log("TOKEN IN INDEX: ", token);
+const httpLink = new HttpLink({ uri: "/api" });
+
+const authMiddleware = new ApolloLink((operation, forward) => {
+	operation.setContext(({ headers = {} }) => ({
+		headers: {
+			...headers,
+			"X-CSRF-TOKEN": sessionStorage.getItem("token") || null,
+		},
+	}));
+	return forward(operation);
+});
 
 const client = new ApolloClient({
-	uri: "/api",
 	cache: new InMemoryCache(),
-	headers: {
-		"X-CSRF-TOKEN": sessionStorage.getItem("token") || "",
-	},
-	// request: async (operation) => {
-	// 	const token = sessionStorage.getItem("token");
-	// 	operation.setContext({
-	// 		headers: {
-	// 			"X-CSRF-TOKEN": token,
-	// 		},
-	// 	});
-	// },
+	link: concat(authMiddleware, httpLink),
 });
 
 const initialViewer: Viewer = {
@@ -57,7 +55,7 @@ const App = () => {
 
 	useEffect(() => {
 		logInRef.current();
-	}, []);
+	}, [logInRef]);
 
 	if (!viewer.didRequest && !error) {
 		return (
@@ -83,7 +81,7 @@ const App = () => {
 				{logInErrorBannerElement}
 				<Routes>
 					<Route path="/" element={<Home />} />
-					<Route path="/host" element={<Host />} />
+					<Route path="/host" element={<Host viewer={viewer} />} />
 					<Route path="/listing/:id" element={<Listing />} />
 					<Route path="/listings/:location" element={<Listings />} />
 					<Route path="/user/:id" element={<User viewer={viewer} />} />
