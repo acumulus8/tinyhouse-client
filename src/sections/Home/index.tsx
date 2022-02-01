@@ -1,6 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { LISTINGS } from "../../lib/graphql/queries";
 import { Listings as ListingsData, ListingsVariables } from "../../lib/graphql/queries/Listings/__generated__/Listings";
@@ -19,8 +18,6 @@ const { Title, Paragraph } = Typography;
 const PAGE_LIMIT = 4;
 
 export const Home = () => {
-	const navigate = useNavigate();
-
 	const { data, loading } = useQuery<ListingsData, ListingsVariables>(LISTINGS, {
 		variables: {
 			filter: ListingsFilter.PRICE_HIGH_TO_LOW,
@@ -28,6 +25,7 @@ export const Home = () => {
 			limit: PAGE_LIMIT,
 		},
 	});
+	const navigate = useNavigate();
 
 	const onSearch = (value: string) => {
 		const trimmedValue = value.trim();

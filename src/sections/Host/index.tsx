@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { Layout, Typography, Form, Input, InputNumber, Radio, Upload, Button } from "antd";
 import { BankOutlined, HomeOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/lib/upload";
 import { Viewer } from "../../lib/types";
-import { ListingType, HostListingRawInput } from "../../lib/graphql/globalTypes";
+import { ListingType } from "../../lib/graphql/globalTypes";
 import { iconColor, displayErrorMessage, displaySuccessNotification } from "../../lib/utils";
 import { HostListingVariables, HostListing as HostListingData } from "../../lib/graphql/mutations/HostListing/__generated__/HostListing";
 import { HOST_LISTING } from "../../lib/graphql/mutations";
@@ -20,7 +20,7 @@ const { Item } = Form;
 
 const beforeImageUpload = (file: File) => {
 	const fileIsValidImage = file.type === "image/jpeg" || file.type === "image/png";
-	const fileIsValidSize = file.size / 1024 / 1024 < 1;
+	const fileIsValidSize = file.size / 1024 / 1024 < 1.2;
 
 	if (!fileIsValidImage) {
 		displayErrorMessage("You're only allowed to upload valid JPG or PNG files!");
@@ -45,7 +45,6 @@ const getBase64Value = (img: File | Blob, callback: (imageVase64Value: string) =
 export const Host = ({ viewer }: Props) => {
 	const [imageLoading, setImageLoading] = useState(false);
 	const [imageBase64Value, setImageBase64Value] = useState<string | null>(null);
-	const navigate = useNavigate();
 
 	const [hostListing, { loading, data }] = useMutation<HostListingData, HostListingVariables>(HOST_LISTING, {
 		onCompleted: () => {
@@ -59,9 +58,7 @@ export const Host = ({ viewer }: Props) => {
 	const [form] = Form.useForm();
 
 	const handleImageUpload = (info: UploadChangeParam) => {
-		console.log("HANDLE IMAGE UPLOAD");
 		const { file } = info;
-		console.log("FILE: ", file);
 
 		if (file.status === "uploading") {
 			setImageLoading(true);
@@ -78,7 +75,7 @@ export const Host = ({ viewer }: Props) => {
 		return;
 	};
 
-	const handleHostListing = async (values: HostListingRawInput) => {
+	const handleHostListing = async (values: any) => {
 		form.validateFields()
 			.then(() => {
 				const fullAddress = `${values.address}, ${values.city}, ${values.state}, ${values.postalCode}`;
@@ -103,24 +100,20 @@ export const Host = ({ viewer }: Props) => {
 			.catch(() => displayErrorMessage("Please complete all required form fileds!"));
 	};
 
-	// if (!viewer.id || !viewer.hasWallet) {
-	// 	return (
-	// 		<Content className="host-content">
-	// 			<div className="host__form-header">
-	// 				<Title level={4} className="host__form-title">
-	// 					You'll have to be signed in and connected with Stripe to host a listing!
-	// 				</Title>
-	// 				<Text type="secondary">
-	// 					We only allow users who've signed in to our application and have connected with Stripe to host new listings. You can sign in
-	// 					at the <Link to="/login">/login</Link> page and connect with Stripe shortly after.
-	// 				</Text>
-	// 			</div>
-	// 		</Content>
-	// 	);
-	// }
-
-	if (data && data.hostListing) {
-		return <Navigate to={`/listing/${data.hostListing.id}`} />;
+	if (!viewer.id || !viewer.hasWallet) {
+		return (
+			<Content className="host-content">
+				<div className="host__form-header">
+					<Title level={4} className="host__form-title">
+						You'll have to be signed in and connected with Stripe to host a listing!
+					</Title>
+					<Text type="secondary">
+						We only allow users who've signed in to our application and have connected with Stripe to host new listings. You can sign in
+						at the <Link to="/login">/login</Link> page and connect with Stripe shortly after.
+					</Text>
+				</div>
+			</Content>
+		);
 	}
 
 	if (loading) {
@@ -136,13 +129,13 @@ export const Host = ({ viewer }: Props) => {
 		);
 	}
 
+	if (data && data.hostListing) {
+		return <Navigate to={`/listing/${data.hostListing.id}`} />;
+	}
+
 	return (
 		<Content className="host-content">
-			<Form
-				layout="vertical"
-				onFinish={handleHostListing}
-				// onFinishFailed={() => displayErrorMessage("Something went wrong with the submission")}
-			>
+			<Form layout="vertical" onFinish={handleHostListing}>
 				<div className="host__form-header">
 					<Title level={3} className="host__form-title">
 						Hi! Let's get started listing your place.

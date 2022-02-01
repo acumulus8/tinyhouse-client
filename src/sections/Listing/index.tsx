@@ -19,7 +19,6 @@ export const Listing = () => {
 	const [checkOutDate, setCheckOutDate] = useState<Moment | null>(null);
 
 	const { id } = useParams() as { id: string };
-	console.log("ID ON LISTING PAGE: ", id);
 
 	const { loading, data, error } = useQuery<ListingData, ListingVariables>(LISTING, {
 		variables: {

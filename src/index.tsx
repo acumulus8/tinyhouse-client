@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { render } from "react-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ApolloClient, ApolloProvider, InMemoryCache, useMutation, concat, HttpLink, ApolloLink, Operation } from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache, useMutation, concat, HttpLink, ApolloLink } from "@apollo/client";
 import { Layout, Affix, Spin } from "antd";
-import { Home, Host, Listing, Listings, NotFound, User, LogIn, AppHeader } from "./sections";
+import { Home, Host, Listing, Listings, NotFound, User, LogIn, AppHeader, Stripe } from "./sections";
 import { AppHeaderSkeleton, ErrorBanner } from "./lib/components";
 import "./styles/index.css";
 import { Viewer } from "./lib/types";
@@ -85,6 +85,7 @@ const App = () => {
 					<Route path="/listing/:id" element={<Listing />} />
 					<Route path="/listings/:location" element={<Listings />} />
 					<Route path="/user/:id" element={<User viewer={viewer} />} />
+					<Route path="/stripe" element={<Stripe viewer={viewer} setViewer={setViewer} />} />
 					<Route path="/login" element={<LogIn setViewer={setViewer} />} />
 					<Route path="*" element={<NotFound />} />
 				</Routes>
