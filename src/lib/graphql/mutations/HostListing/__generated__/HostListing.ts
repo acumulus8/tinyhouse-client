@@ -14,19 +14,6 @@ export interface HostListing_hostListing {
 	id: string;
 }
 
-export interface HostListingRawInput {
-	title: string;
-	description: string;
-	image: string | null;
-	type: ListingType;
-	address: string;
-	city?: string;
-	state?: string;
-	postalCode?: string;
-	price: number;
-	numOfGuests: number;
-}
-
 export interface HostListing {
 	hostListing: HostListing_hostListing;
 }

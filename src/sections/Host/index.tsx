@@ -5,13 +5,9 @@ import { Layout, Typography, Form, Input, InputNumber, Radio, Upload, Button } f
 import { BankOutlined, HomeOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/lib/upload";
 import { Viewer } from "../../lib/types";
-import { ListingType } from "../../lib/graphql/globalTypes";
+import { ListingType, HostListingRawInput } from "../../lib/graphql/globalTypes";
 import { iconColor, displayErrorMessage, displaySuccessNotification } from "../../lib/utils";
-import {
-	HostListingVariables,
-	HostListing as HostListingData,
-	HostListingRawInput,
-} from "../../lib/graphql/mutations/HostListing/__generated__/HostListing";
+import { HostListingVariables, HostListing as HostListingData } from "../../lib/graphql/mutations/HostListing/__generated__/HostListing";
 import { HOST_LISTING } from "../../lib/graphql/mutations";
 
 interface Props {
