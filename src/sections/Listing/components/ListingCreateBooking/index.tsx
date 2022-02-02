@@ -2,6 +2,9 @@ import React from "react";
 import { Button, Card, Divider, Typography, DatePicker } from "antd";
 import moment, { Moment } from "moment";
 import { formatListingPrice, displayErrorMessage } from "../../../../lib/utils";
+import { Viewer } from "../../../../lib/types";
+import { BookingsIndex } from "./types";
+import { Listing as ListingData } from "../../../../lib/graphql/queries/Listing/__generated__/Listing";
 
 interface Props {
 	price: number;
@@ -9,15 +12,43 @@ interface Props {
 	checkOutDate: Moment | null;
 	setCheckInDate: (checkInDate: Moment | null) => void;
 	setCheckOutDate: (checkOutDate: Moment | null) => void;
+	viewer: Viewer;
+	host: ListingData["listing"]["host"];
+	bookingsIndex: ListingData["listing"]["bookingsIndex"];
+	setModalVisible: (modalVisible: boolean) => void;
 }
 
-const { Paragraph, Title } = Typography;
+const { Paragraph, Title, Text } = Typography;
 
-export const ListingCreateBooking = ({ price, checkInDate, checkOutDate, setCheckInDate, setCheckOutDate }: Props) => {
+export const ListingCreateBooking = ({
+	price,
+	checkInDate,
+	checkOutDate,
+	setCheckInDate,
+	setCheckOutDate,
+	viewer,
+	host,
+	bookingsIndex,
+	setModalVisible,
+}: Props) => {
+	const bookingsIndexJSON: BookingsIndex = JSON.parse(bookingsIndex);
+
+	const dateIsBooked = (currentDate: Moment) => {
+		const year = moment(currentDate).year();
+		const month = moment(currentDate).month();
+		const day = moment(currentDate).date();
+
+		if (bookingsIndexJSON[year] && bookingsIndexJSON[year][month]) {
+			return Boolean(bookingsIndexJSON[year][month][day]);
+		} else {
+			return false;
+		}
+	};
+
 	const disabledDate = (currentDate?: Moment) => {
 		if (currentDate) {
 			const dateIsBeforeEndOfDay = currentDate.isBefore(moment().endOf("day"));
-			return dateIsBeforeEndOfDay;
+			return dateIsBeforeEndOfDay || dateIsBooked(currentDate);
 		} else {
 			return false;
 		}
@@ -28,12 +59,37 @@ export const ListingCreateBooking = ({ price, checkInDate, checkOutDate, setChec
 			if (moment(selectedCheckOutDate).isBefore(checkInDate, "days")) {
 				return displayErrorMessage("You can't book a checkout date prior to the check in.");
 			}
+
+			let dateCursor = checkInDate;
+
+			while (moment(dateCursor).isBefore(selectedCheckOutDate, "days")) {
+				dateCursor = moment(dateCursor).add(1, "days");
+
+				const year = moment(dateCursor).year();
+				const month = moment(dateCursor).month();
+				const day = moment(dateCursor).date();
+
+				if (bookingsIndexJSON[year] && bookingsIndexJSON[year][month] && bookingsIndexJSON[year][month][day]) {
+					return displayErrorMessage("You can't book a period of time that overlaps existing booking dates.");
+				}
+			}
 		}
 		setCheckOutDate(selectedCheckOutDate);
 	};
 
-	const checkOutInputDisabled = !checkInDate;
-	const buttonDisabled = !checkInDate || !checkOutDate;
+	const viewerIsHost = viewer.id === host.id;
+	const checkInInputDisabled = !viewer.id || viewerIsHost || !host.hasWallet;
+	const checkOutInputDisabled = checkInInputDisabled || !checkInDate;
+	const buttonDisabled = checkInInputDisabled || !checkInDate || !checkOutDate;
+
+	let buttonMessage = "You won't be charged yet";
+	if (!viewer.id) {
+		buttonMessage = "You have to be signed in to book this listing!";
+	} else if (viewerIsHost) {
+		buttonMessage = "You can't book your own listing!";
+	} else if (!host.hasWallet) {
+		buttonMessage = "The host has disconnected from Stripe and won't be able to accept payments or bookings for this listing.";
+	}
 
 	return (
 		<div className="listing-booking">
@@ -52,6 +108,7 @@ export const ListingCreateBooking = ({ price, checkInDate, checkOutDate, setChec
 							value={checkInDate ? checkInDate : undefined}
 							onChange={(dateValue) => setCheckInDate(dateValue)}
 							format={"YYYY/MM/DD"}
+							disabled={checkInInputDisabled}
 							disabledDate={disabledDate}
 							showToday={false}
 							onOpenChange={() => setCheckOutDate(null)}
@@ -70,9 +127,18 @@ export const ListingCreateBooking = ({ price, checkInDate, checkOutDate, setChec
 					</div>
 				</div>
 				<Divider />
-				<Button size="large" type="primary" className="listing-booking__card-cta" disabled={buttonDisabled}>
+				<Button
+					size="large"
+					type="primary"
+					className="listing-booking__card-cta"
+					disabled={buttonDisabled}
+					onClick={() => setModalVisible(true)}
+				>
 					Request to book!
 				</Button>
+				<Text type="secondary" mark>
+					{buttonMessage}
+				</Text>
 			</Card>
 		</div>
 	);

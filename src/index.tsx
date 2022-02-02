@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { render } from "react-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ApolloClient, ApolloProvider, InMemoryCache, useMutation, concat, HttpLink, ApolloLink } from "@apollo/client";
+import { StripeProvider, Elements } from "react-stripe-elements";
 import { Layout, Affix, Spin } from "antd";
 import { Home, Host, Listing, Listings, NotFound, User, LogIn, AppHeader, Stripe } from "./sections";
 import { AppHeaderSkeleton, ErrorBanner } from "./lib/components";
@@ -73,24 +74,33 @@ const App = () => {
 	) : null;
 
 	return (
-		<Router>
-			<Layout id="app">
-				<Affix offsetTop={0}>
-					<AppHeader viewer={viewer} setViewer={setViewer} />
-				</Affix>
-				{logInErrorBannerElement}
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/host" element={<Host viewer={viewer} />} />
-					<Route path="/listing/:id" element={<Listing />} />
-					<Route path="/listings/:location" element={<Listings />} />
-					<Route path="/user/:id" element={<User viewer={viewer} setViewer={setViewer} />} />
-					<Route path="/stripe" element={<Stripe viewer={viewer} setViewer={setViewer} />} />
-					<Route path="/login" element={<LogIn setViewer={setViewer} />} />
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</Layout>
-		</Router>
+		<StripeProvider apiKey={process.env.REACT_APP_S_PUBLISHABLE_KEY as string}>
+			<Router>
+				<Layout id="app">
+					<Affix offsetTop={0}>
+						<AppHeader viewer={viewer} setViewer={setViewer} />
+					</Affix>
+					{logInErrorBannerElement}
+					<Routes>
+						<Route path="/" element={<Home />} />
+						<Route path="/host" element={<Host viewer={viewer} />} />
+						<Route
+							path="/listing/:id"
+							element={
+								<Elements>
+									<Listing viewer={viewer} />
+								</Elements>
+							}
+						/>
+						<Route path="/listings/:location" element={<Listings />} />
+						<Route path="/user/:id" element={<User viewer={viewer} setViewer={setViewer} />} />
+						<Route path="/stripe" element={<Stripe viewer={viewer} setViewer={setViewer} />} />
+						<Route path="/login" element={<LogIn setViewer={setViewer} />} />
+						<Route path="*" element={<NotFound />} />
+					</Routes>
+				</Layout>
+			</Router>
+		</StripeProvider>
 	);
 };
 

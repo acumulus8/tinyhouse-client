@@ -4,29 +4,44 @@ import { useQuery } from "@apollo/client";
 import { Moment } from "moment";
 import { Layout, Col, Row } from "antd";
 import { LISTING } from "../../lib/graphql/queries";
-import { ListingDetails, ListingBookings, ListingCreateBooking } from "./components";
+import { ListingDetails, ListingBookings, ListingCreateBooking, WrappedListingCreateBookingModal as ListingCreateBookingModal } from "./components";
 import { PageSkeleton, ErrorBanner } from "../../lib/components";
 import { Listing as ListingData, ListingVariables } from "../../lib/graphql/queries/Listing/__generated__/Listing";
-import { mockListingBookings } from "./utils/mock listings";
+import { Viewer } from "../../lib/types";
+
+interface Props {
+	viewer: Viewer;
+}
 
 const { Content } = Layout;
 
 const PAGE_LIMIT = 3;
 
-export const Listing = () => {
+export const Listing = ({ viewer }: Props) => {
 	const [bookingsPage, setBookingsPage] = useState<number>(1);
 	const [checkInDate, setCheckInDate] = useState<Moment | null>(null);
 	const [checkOutDate, setCheckOutDate] = useState<Moment | null>(null);
+	const [modalVisible, setModalVisible] = useState<boolean>(false);
 
 	const { id } = useParams() as { id: string };
 
-	const { loading, data, error } = useQuery<ListingData, ListingVariables>(LISTING, {
+	const { loading, data, error, refetch } = useQuery<ListingData, ListingVariables>(LISTING, {
 		variables: {
 			id: id || "",
 			bookingsPage,
 			limit: PAGE_LIMIT,
 		},
 	});
+
+	const clearBookingData = () => {
+		setModalVisible(false);
+		setCheckInDate(null);
+		setCheckOutDate(null);
+	};
+
+	const handleListingRefetch = async () => {
+		await refetch();
+	};
 
 	if (loading) {
 		return (
@@ -46,13 +61,27 @@ export const Listing = () => {
 	}
 
 	const listing = data ? data.listing : null;
-	const listingBookings = listing ? listing.bookings : null;
+
+	const listingCreateBookingModalElement =
+		listing && checkInDate && checkOutDate ? (
+			<ListingCreateBookingModal
+				id={listing.id}
+				modalVisible={modalVisible}
+				setModalVisible={setModalVisible}
+				price={listing.price}
+				checkInDate={checkInDate}
+				checkOutDate={checkOutDate}
+				clearBookingData={clearBookingData}
+				handleListingRefetch={handleListingRefetch}
+			/>
+		) : null;
 
 	const listingDetailsElement = listing ? <ListingDetails listing={listing} /> : null;
 
-	const listingBookingsElement = mockListingBookings ? (
-		<ListingBookings listingBookings={mockListingBookings} bookingsPage={bookingsPage} limit={PAGE_LIMIT} setBookingsPage={setBookingsPage} />
-	) : null;
+	const listingBookingsElement =
+		listing && listing.bookings ? (
+			<ListingBookings listingBookings={listing.bookings} bookingsPage={bookingsPage} limit={PAGE_LIMIT} setBookingsPage={setBookingsPage} />
+		) : null;
 
 	const listingCreateBookingElement = listing ? (
 		<ListingCreateBooking
@@ -61,6 +90,10 @@ export const Listing = () => {
 			checkOutDate={checkOutDate}
 			setCheckInDate={setCheckInDate}
 			setCheckOutDate={setCheckOutDate}
+			bookingsIndex={listing.bookingsIndex}
+			viewer={viewer}
+			host={listing.host}
+			setModalVisible={setModalVisible}
 		/>
 	) : null;
 
@@ -75,6 +108,7 @@ export const Listing = () => {
 					{listingCreateBookingElement}
 				</Col>
 			</Row>
+			{listingCreateBookingModalElement}
 		</Content>
 	);
 };

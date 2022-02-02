@@ -12,6 +12,7 @@ specifiers:
   '@types/react': ^17.0.38
   '@types/react-dom': ^17.0.11
   '@types/react-router-dom': ^5.3.2
+  '@types/react-stripe-elements': ^6.0.6
   antd: ^4.18.3
   apollo-boost: ^0.4.9
   graphql: ^16.2.0
@@ -20,6 +21,7 @@ specifiers:
   react-dom: ^17.0.2
   react-router-dom: ^6.2.1
   react-scripts: 5.0.0
+  react-stripe-elements: ^6.1.2
   typescript: ^4.5.4
   web-vitals: ^2.1.2
 
@@ -35,6 +37,7 @@ dependencies:
   '@types/react': 17.0.38
   '@types/react-dom': 17.0.11
   '@types/react-router-dom': 5.3.3
+  '@types/react-stripe-elements': 6.0.6
   antd: 4.18.5_react-dom@17.0.2+react@17.0.2
   apollo-boost: 0.4.9_graphql@16.3.0
   graphql: 16.3.0
@@ -43,6 +46,7 @@ dependencies:
   react-dom: 17.0.2_react@17.0.2
   react-router-dom: 6.2.1_react-dom@17.0.2+react@17.0.2
   react-scripts: 5.0.0_react@17.0.2+typescript@4.5.5
+  react-stripe-elements: 6.1.2_react-dom@17.0.2+react@17.0.2
   typescript: 4.5.5
   web-vitals: 2.1.4
 
@@ -2400,6 +2404,13 @@ packages:
       '@types/react': 17.0.38
     dev: false
 
+  /@types/react-stripe-elements/6.0.6:
+    resolution: {integrity: sha512-LrLQ4f0tvUww5WxTYRiWedVp8HijKUall4KrKO5wbp2RrAmGV2WDhzfhhmdUGYOY2mAAUId1su82aIrkSkzz1A==}
+    dependencies:
+      '@types/react': 17.0.38
+      '@types/stripe-v3': 3.1.26
+    dev: false
+
   /@types/react/17.0.38:
     resolution: {integrity: sha512-SI92X1IA+FMnP3qM5m4QReluXzhcmovhZnLNm3pyeQlooi02qI7sLiepEYqT678uNiyc25XfCqxREFpy3W7YhQ==}
     dependencies:
@@ -2443,6 +2454,10 @@ packages:
 
   /@types/stack-utils/2.0.1:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
+    dev: false
+
+  /@types/stripe-v3/3.1.26:
+    resolution: {integrity: sha512-c3cI1OzDJ2L1MYm8WvRfpTAojm8O3WyJDEq90py8d2zQJy+sY4ducdQztmZ5ykrRhCPNQJIBHzpEPLl5nCZfSQ==}
     dev: false
 
   /@types/testing-library__jest-dom/5.14.2:
@@ -8073,6 +8088,14 @@ packages:
       sisteransi: 1.0.5
     dev: false
 
+  /prop-types/15.7.2:
+    resolution: {integrity: sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react-is: 16.13.1
+    dev: false
+
   /prop-types/15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
     dependencies:
@@ -8853,6 +8876,17 @@ packages:
       - webpack-cli
       - webpack-hot-middleware
       - webpack-plugin-serve
+    dev: false
+
+  /react-stripe-elements/6.1.2_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-gYbYhVVJm3Woc84TgmuiqUj44rI/BZGUVUTTmS0U6kZyZa5fYMPlKKIsVZdQZufQ7Ab4BXLO2LSxBlGY0s2jew==}
+    peerDependencies:
+      react: ^15.5.4 || ^16.0.0-0
+      react-dom: ^15.5.4 || ^16.0.0-0
+    dependencies:
+      prop-types: 15.7.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /react/17.0.2:

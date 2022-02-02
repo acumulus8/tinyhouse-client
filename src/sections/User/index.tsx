@@ -67,7 +67,6 @@ export const User = ({ viewer, setViewer }: Props) => {
 	const userBookingsElement = userBookings ? (
 		<UserBookings userBookings={userBookings} bookingsPage={bookingsPage} limit={PAGE_LIMIT} setBookingsPage={setBookingsPage} />
 	) : null;
-
 	const stripeError = new URL(window.location.href).searchParams.get("stripe_error");
 	const stripeErrorBanner = stripeError ? <ErrorBanner description="We had an issue connecting with Stripe. Please try again soon." /> : null;
 
