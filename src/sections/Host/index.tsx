@@ -9,6 +9,7 @@ import { ListingType } from "../../lib/graphql/globalTypes";
 import { iconColor, displayErrorMessage, displaySuccessNotification } from "../../lib/utils";
 import { HostListingVariables, HostListing as HostListingData } from "../../lib/graphql/mutations/HostListing/__generated__/HostListing";
 import { HOST_LISTING } from "../../lib/graphql/mutations";
+import { useScrollToTop } from "../../lib/hooks";
 
 interface Props {
 	viewer: Viewer;
@@ -45,6 +46,7 @@ const getBase64Value = (img: File | Blob, callback: (imageVase64Value: string) =
 export const Host = ({ viewer }: Props) => {
 	const [imageLoading, setImageLoading] = useState(false);
 	const [imageBase64Value, setImageBase64Value] = useState<string | null>(null);
+	useScrollToTop();
 
 	const [hostListing, { loading, data }] = useMutation<HostListingData, HostListingVariables>(HOST_LISTING, {
 		onCompleted: () => {

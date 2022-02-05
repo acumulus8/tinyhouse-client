@@ -10,6 +10,7 @@ import googleLogo from "./assets/google_logo.png";
 import { Viewer } from "../../lib/types";
 import { ErrorBanner } from "../../lib/components";
 import { displayErrorMessage, displaySuccessNotification } from "../../lib/utils";
+import { useScrollToTop } from "../../lib/hooks";
 
 const { Content } = Layout;
 const { Text, Title } = Typography;
@@ -29,6 +30,7 @@ export const LogIn = ({ setViewer }: Props) => {
 			}
 		},
 	});
+	useScrollToTop();
 
 	const logInRef = useRef(logIn);
 

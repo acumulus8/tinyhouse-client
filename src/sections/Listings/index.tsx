@@ -7,6 +7,7 @@ import { LISTINGS } from "../../lib/graphql/queries";
 import { Listings as ListingsData, ListingsVariables } from "../../lib/graphql/queries/Listings/__generated__/Listings";
 import { ListingsFilter } from "../../lib/graphql/globalTypes";
 import { ListingsFilters, ListingsPagination, ListingsSkeleton } from "./components";
+import { useScrollToTop } from "../../lib/hooks";
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -17,7 +18,7 @@ export const Listings = () => {
 	const [filter, setFilter] = useState<ListingsFilter>(ListingsFilter.PRICE_LOW_TO_HIGH);
 	const [page, setPage] = useState<number>(1);
 	const params = useParams();
-	const locationRef = useRef(params.location);
+	useScrollToTop();
 
 	const { data, loading, error } = useQuery<ListingsData, ListingsVariables>(LISTINGS, {
 		// skip: locationRef.current !== params.location && page !== 1,

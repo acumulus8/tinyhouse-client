@@ -7,6 +7,7 @@ import { ListingsFilter } from "../../lib/graphql/globalTypes";
 import { Col, Row, Layout, Typography } from "antd";
 import { HomeHero, HomeListings, HomeListingsSkeleton } from "./components";
 import { displayErrorMessage } from "../../lib/utils";
+import { useScrollToTop } from "../../lib/hooks";
 
 import mapBackground from "./assets/map-background.jpg";
 import sanFransiscoImage from "./assets/san-fransisco.jpg";
@@ -24,8 +25,10 @@ export const Home = () => {
 			page: 1,
 			limit: PAGE_LIMIT,
 		},
+		fetchPolicy: "cache-and-network",
 	});
 	const navigate = useNavigate();
+	useScrollToTop();
 
 	const onSearch = (value: string) => {
 		const trimmedValue = value.trim();

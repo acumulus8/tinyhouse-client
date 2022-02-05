@@ -8,6 +8,7 @@ import { ListingDetails, ListingBookings, ListingCreateBooking, WrappedListingCr
 import { PageSkeleton, ErrorBanner } from "../../lib/components";
 import { Listing as ListingData, ListingVariables } from "../../lib/graphql/queries/Listing/__generated__/Listing";
 import { Viewer } from "../../lib/types";
+import { useScrollToTop } from "../../lib/hooks";
 
 interface Props {
 	viewer: Viewer;
@@ -22,6 +23,7 @@ export const Listing = ({ viewer }: Props) => {
 	const [checkInDate, setCheckInDate] = useState<Moment | null>(null);
 	const [checkOutDate, setCheckOutDate] = useState<Moment | null>(null);
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
+	useScrollToTop();
 
 	const { id } = useParams() as { id: string };
 
