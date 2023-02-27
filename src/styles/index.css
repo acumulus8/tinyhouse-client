@@ -461,6 +461,7 @@
 }
 .listings-skeleton__card {
 	margin: 5px 0;
+	width: 350px;
 }
 .listings-skeleton__card-cover-img {
 	width: 100%;

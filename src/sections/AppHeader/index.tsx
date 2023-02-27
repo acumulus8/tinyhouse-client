@@ -19,8 +19,6 @@ export const AppHeader = ({ viewer, setViewer }: Props) => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	const pathname = window.location.pathname;
-
 	useEffect(() => {
 		const pathnameSubStrings = location.pathname.split("/");
 
@@ -58,7 +56,7 @@ export const AppHeader = ({ viewer, setViewer }: Props) => {
 						placeholder="Search 'San Fransisco'"
 						enterButton
 						onSearch={onSearch}
-						value={search}
+						value={search.replace("%20", " ")}
 						onChange={(e) => setSearch(e.target.value)}
 					/>
 				</div>

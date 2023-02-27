@@ -47,6 +47,7 @@ export const User = ({ viewer, setViewer }: Props) => {
 	}
 
 	if (error) {
+		console.log("________ERRROR ON USER PAGE: ", error);
 		return (
 			<Content className="user">
 				<ErrorBanner message="This user may not exist or an error has occured" />

@@ -29,6 +29,9 @@ export const LogIn = ({ setViewer }: Props) => {
 				displaySuccessNotification("You've successfully logged in");
 			}
 		},
+		onError: () => {
+			console.log("ERROR LOGGING IN FROM LOGIN PAGE");
+		},
 	});
 	useScrollToTop();
 
@@ -63,6 +66,7 @@ export const LogIn = ({ setViewer }: Props) => {
 
 	if (logInData && logInData.logIn) {
 		const { id: viewerId } = logInData.logIn;
+		console.log("viewerId: ", logInData);
 		return <Navigate to={`/user/${viewerId}`} />;
 	}
 
