@@ -11,7 +11,8 @@ import { Viewer } from "./lib/types";
 import { LOG_IN } from "./lib/graphql/mutations";
 import { LogIn as LogInData, LogInVariables } from "./lib/graphql/mutations/LogIn/__generated__/LogIn";
 
-const httpLink = new HttpLink({ uri: "/api" });
+// const httpLink = new HttpLink({ uri: "/api" });
+const httpLink = new HttpLink({ uri: "https://tinyhouse-server1.herokuapp.com/api" });
 
 const authMiddleware = new ApolloLink((operation, forward) => {
 	operation.setContext(({ headers = {} }) => ({
