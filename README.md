@@ -8,7 +8,6 @@
 -   [Overview](#overview)
 -   [Features](#features)
 -   [Code Structure](#code-structure)
--   [Authentication](#authentication)
 -   [License](#license)
 
 ## Overview
